@@ -1,0 +1,17 @@
+
+
+/********** LOGIN PAGE **********/
+Button pas encore de compte : button_registerNow
+Champ email : login_emailInput
+Champ pwd : login_passwordInput
+Button connexion : login_button
+
+/********** REGISTER PAGE **********/
+Button déjà un compte : button_loginNow
+Champ prénom : login_firstNameInput
+Champ nom : login_lastNameInput
+Champ email : login_emailInput
+Champ pwd : login_passwordInput
+Confirm pwd : login_passwordConfirmInput
+Button s'inscrire : register_button
+

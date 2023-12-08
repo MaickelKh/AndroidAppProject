@@ -66,7 +66,7 @@
             android:layout_height="match_parent">
 
             <EditText
-                android:id="@+id/login_passwordInput2"
+                android:id="@+id/login_passwordConfirmInput"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="284dp"
@@ -81,7 +81,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/login_emailInput2"
+                android:id="@+id/login_firstNameInput"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="16dp"
@@ -111,7 +111,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/login_emailInput3"
+                android:id="@+id/login_lastNameInput"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="80dp"
@@ -141,7 +141,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/button_login"
+                android:id="@+id/register_button"
                 android:layout_width="317dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="88dp"
