@@ -1,37 +1,13 @@
 package be.heh.projetmobile.db
 
-class User(i : Int) {
-    var id: Int = 0
-        public get
-        private set
-    var first_name = "null"
-        public get
-        private set
-    var last_name = "null"
-        public get
-        private set
-    var function = "null"
-        public get
-        private set
-    var pwd: String = "null"
-        public get
-        private set
-    var email: String = "null"
-        public get
-        private set
-
-    constructor(
-        i: Int, ln: String, fn: String,
-        p: String, e: String, f: String
-    ) : this(i) {
-        id = i
-        first_name = fn
-        last_name = ln
-        function = f
-        pwd = p
-        email = e
-    }
-
+class User(
+    var id: Int,
+    var first_name: String,
+    var last_name: String,
+    var function: String,
+    var pwd: String,
+    var email: String
+) {
     override fun toString(): String {
         val sb = StringBuilder()
         sb.append(
