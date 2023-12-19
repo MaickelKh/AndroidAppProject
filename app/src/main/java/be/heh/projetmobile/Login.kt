@@ -4,23 +4,61 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
+import androidx.room.Room
+import be.heh.projetmobile.db.MyDB
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class Login : AppCompatActivity() {
+class Login : AppCompatActivity(), CoroutineScope by MainScope() {
+    private lateinit var db: MyDB
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         supportActionBar?.hide() // Hide the action bar
 
-        val loginButton = findViewById<Button>(R.id.login_button)
-        loginButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+        val registerButton = findViewById<Button>(R.id.button_registerNow)
+        registerButton.setOnClickListener {
+            val intent = Intent(this@Login, Register::class.java)
             startActivity(intent)
         }
+        // Initialize the database
+        db = Room.databaseBuilder(
+            applicationContext,
+            MyDB::class.java, "MyDataBase"
+        ).build()
 
-        val registerNowButton = findViewById<Button>(R.id.button_registerNow)
-        registerNowButton.setOnClickListener {
-            val intent = Intent(this, Register::class.java)
-            startActivity(intent)
+        val emailInput = findViewById<EditText>(R.id.login_emailInput)
+        val passwordInput = findViewById<EditText>(R.id.login_passwordInput)
+        val loginButton = findViewById<Button>(R.id.login_button)
+
+        loginButton.setOnClickListener {
+    val email = emailInput.text.toString()
+    val password = passwordInput.text.toString()
+
+    // Query the database for a user with the entered email and password
+    launch(Dispatchers.IO) {
+        try {
+            val user = db.userDao().getUserByEmail(email)
+            withContext(Dispatchers.Main) {
+                if (user != null && user.pwd == password) {
+                    // If a user is found and the password is correct, navigate to the main activity
+                    val intent = Intent(this@Login, MainActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    // Show an error message if the email or password is incorrect
+                    passwordInput.error = "Incorrect email or password"
+                }
+            }
+        } catch (e: Exception) {
+            // Print the exception to the console
+            e.printStackTrace()
         }
+    }
+}
     }
 }

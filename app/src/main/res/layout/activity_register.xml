@@ -66,7 +66,7 @@
             android:layout_height="match_parent">
 
             <EditText
-                android:id="@+id/login_passwordConfirmInput"
+                android:id="@+id/register_passwordConfirmInput"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="284dp"
@@ -81,7 +81,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/login_firstNameInput"
+                android:id="@+id/register_firstNameInput"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="16dp"
@@ -96,7 +96,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/login_emailInput"
+                android:id="@+id/register_emailInput"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="148dp"
@@ -111,7 +111,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/login_lastNameInput"
+                android:id="@+id/register_lastNameInput"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="80dp"
@@ -126,7 +126,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/login_passwordInput"
+                android:id="@+id/register_passwordInput"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="216dp"
@@ -153,7 +153,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.457"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/login_passwordInput" />
+                app:layout_constraintTop_toBottomOf="@+id/register_passwordInput" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

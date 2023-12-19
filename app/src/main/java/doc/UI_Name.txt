@@ -8,10 +8,10 @@ Button connexion : login_button
 
 /********** REGISTER PAGE **********/
 Button déjà un compte : button_loginNow
-Champ prénom : login_firstNameInput
-Champ nom : login_lastNameInput
-Champ email : login_emailInput
-Champ pwd : login_passwordInput
-Confirm pwd : login_passwordConfirmInput
+Champ prénom : register_firstNameInput
+Champ nom : register_lastNameInput
+Champ email : register_emailInput
+Champ pwd : register_passwordInput
+Confirm pwd : register_passwordConfirmInput
 Button s'inscrire : register_button
 
