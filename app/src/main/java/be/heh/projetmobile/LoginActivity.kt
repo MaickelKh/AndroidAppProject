@@ -13,7 +13,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class Login : AppCompatActivity(), CoroutineScope by MainScope() {
+class LoginActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private lateinit var db: MyDB
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +23,7 @@ class Login : AppCompatActivity(), CoroutineScope by MainScope() {
 
         val registerButton = findViewById<Button>(R.id.button_registerNow)
         registerButton.setOnClickListener {
-            val intent = Intent(this@Login, Register::class.java)
+            val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
             startActivity(intent)
         }
         // Initialize the database
@@ -47,7 +47,7 @@ class Login : AppCompatActivity(), CoroutineScope by MainScope() {
             withContext(Dispatchers.Main) {
                 if (user != null && user.pwd == password) {
                     // If a user is found and the password is correct, navigate to the main activity
-                    val intent = Intent(this@Login, MainActivity::class.java)
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                 } else {
                     // Show an error message if the email or password is incorrect

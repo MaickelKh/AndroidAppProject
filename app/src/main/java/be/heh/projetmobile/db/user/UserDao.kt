@@ -1,8 +1,7 @@
-package be.heh.projetmobile.db
+package be.heh.projetmobile.db.user
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
-import be.heh.projetmobile.db.UserRecord
+
 @Dao
 interface UserDao {
     @Query("SELECT * FROM UserTable")
@@ -11,8 +10,8 @@ interface UserDao {
     fun getUserByEmail(email: String): UserRecord
     @Insert
     fun insertUser(vararg listCategories: UserRecord)
-    @Update
-    fun updatePersonne(task: UserRecord)
+    @Query("UPDATE UserTable SET function = :newFunction WHERE email = :email")
+    fun updateUserFunction(email: String, newFunction: String)
     @Delete
-    fun deletePersonne(task: UserRecord)
+    fun deleteUser(task: UserRecord)
 }

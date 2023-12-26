@@ -8,7 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.room.Room
 import be.heh.projetmobile.db.MyDB
-import be.heh.projetmobile.db.UserRecord
+import be.heh.projetmobile.db.user.UserRecord
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class Register : AppCompatActivity(), CoroutineScope by MainScope() {
+class RegisterActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -88,10 +88,10 @@ class Register : AppCompatActivity(), CoroutineScope by MainScope() {
             dao.insertUser(u)
 
             withContext(Dispatchers.Main) {
-                Toast.makeText(this@Register, "Inscription confirmée", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@RegisterActivity, "Inscription confirmée", Toast.LENGTH_LONG).show()
 
                 // Redirect to the login page
-                val intent = Intent(this@Register, Login::class.java)
+                val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                 startActivity(intent)
             }
         }

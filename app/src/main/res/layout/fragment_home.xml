@@ -49,7 +49,7 @@
         android:layout_marginTop="20dp" >
 
         <Button
-            android:id="@+id/button_homeGiveButton"
+            android:id="@+id/button_homeGive"
             android:backgroundTint="#03A9F4"
             android:drawableLeft="@drawable/ic_qr_code_scanner_24"
             android:text="@string/home_give_button"
@@ -64,7 +64,7 @@
             />
 
         <Button
-            android:id="@+id/button_homeGiveBackButton"
+            android:id="@+id/button_homeGiveBac"
             android:backgroundTint="#03A9F4"
             android:drawableLeft="@drawable/ic_qr_code_scanner_24"
             android:text="@string/home_give_back_button"
@@ -79,7 +79,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/button_homeAddButton"
+        android:id="@+id/button_homeAdd"
         android:text="@string/home_add_button"
         android:drawableLeft="@drawable/ic_add_24"
         android:backgroundTint="#03A9F4"
@@ -189,7 +189,7 @@
 
 
     <Button
-        android:id="@+id/button_homeDeleteButton"
+        android:id="@+id/button_homeDelete"
         android:text="@string/home_logout_button"
         android:backgroundTint="#EF2626"
         android:textColor="#FFFFFF"

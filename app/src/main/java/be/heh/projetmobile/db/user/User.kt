@@ -1,4 +1,4 @@
-package be.heh.projetmobile.db
+package be.heh.projetmobile.db.user
 
 class User(
     var id: Int,

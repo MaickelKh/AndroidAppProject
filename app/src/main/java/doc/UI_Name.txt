@@ -15,3 +15,8 @@ Champ pwd : register_passwordInput
 Confirm pwd : register_passwordConfirmInput
 Button s'inscrire : register_button
 
+/********** HOME PAGE **********/
+Button emprunt : button_homeGive
+Button remise : button_homeGiveBac
+Button ajouter : button_homeAdd
+Button déconnexion : button_homeDelete

@@ -11,6 +11,7 @@ android {
     compileSdk 34
 
     defaultConfig {
+
         applicationId "be.heh.projetmobile"
         minSdk 33
         targetSdk 34
@@ -73,4 +74,6 @@ dependencies {
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
+    // QRCode Scanner
+    implementation 'com.journeyapps:zxing-android-embedded:4.2.0'
 }

@@ -11,7 +11,7 @@
     <!-- Account -->
     <string name="account_loginEmail">Email</string>
     <string name="account_loginPwd">Mot de passe</string>
-        <!-- Login -->
+    <!-- Login -->
     <string name="account_login">CONNEXION</string>
     <string name="account_newAccount">Pas encore de compte ?</string>
     <string name="account_newAccountButton">Inscris Toi !</string>
@@ -19,7 +19,7 @@
     <string name="account_loginLastName">Nom</string>
     <string name="account_connectButton">Se connecter</string>
     <string name="account_account_checkbox">Se souvenir de moi</string>
-        <!-- Register -->
+    <!-- Register -->
     <string name="account_register">INSCRIPTION</string>
     <string name="account_existingAccount">Déjà inscrit ?</string>
     <string name="account_existingAccountButton">Connecte Toi !</string>

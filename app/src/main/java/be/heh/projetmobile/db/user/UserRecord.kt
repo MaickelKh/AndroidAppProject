@@ -1,4 +1,4 @@
-package be.heh.projetmobile.db
+package be.heh.projetmobile.db.user
 
 import androidx.room.*
 @Entity(tableName = "UserTable")
