@@ -19,7 +19,10 @@ Button s'inscrire : register_button
 Button emprunt : button_homeGive
 Button remise : button_homeGiveBac
 Button ajouter : button_homeAdd
-Button déconnexion : button_homeDelete
+Button déconnexion : button_homeLogout
+Prénom : HomeUserName
+Nbre utilisateur inscrit : countUser
+Nbre article loué : countLoaned
 
 /********** MATERIAL PAGE **********/
 Button dispo : button_homeAvailable
