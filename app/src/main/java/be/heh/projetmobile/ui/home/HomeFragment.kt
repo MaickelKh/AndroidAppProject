@@ -93,7 +93,7 @@ class HomeFragment : Fragment() {
                 brand = parts[3],
                 ref = parts[4].toInt(),
                 maker = parts[5],
-                available = parts[6].toBoolean()
+                available = parts[6].toInt()
             )
             // Add the new article to the database on a background thread
             lifecycleScope.launch(Dispatchers.IO) {

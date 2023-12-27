@@ -20,3 +20,7 @@ Button emprunt : button_homeGive
 Button remise : button_homeGiveBac
 Button ajouter : button_homeAdd
 Button déconnexion : button_homeDelete
+
+/********** MATERIAL PAGE **********/
+Button dispo : button_homeAvailable
+Button non dispo : button_homeNotAvailable

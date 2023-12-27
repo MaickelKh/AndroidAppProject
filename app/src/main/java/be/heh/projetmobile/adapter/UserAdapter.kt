@@ -44,7 +44,7 @@ class UserAdapter(private val users: MutableList<UserRecord>, private val contex
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Choisissez une nouvelle fonction")
 
-            val roles = arrayOf("Admin", "RO", "RW", "Désactivé")
+            val roles = arrayOf("Admin", "Basic", "RW", "Désactivé")
             val spinner = Spinner(context)
             spinner.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, roles)
             builder.setView(spinner)

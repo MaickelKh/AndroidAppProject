@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import be.heh.projetmobile.R
@@ -22,6 +23,11 @@ class MaterialAdapter : RecyclerView.Adapter<MaterialAdapter.MaterialViewHolder>
     override fun onBindViewHolder(holder: MaterialViewHolder, position: Int) {
         val material = materials[position]
         holder.materialName.text = material.name
+        if (material.available == 0) {
+            holder.availableIcon.setImageResource(R.drawable.baseline_cancel_24)
+        } else if (material.available == 1) {
+            holder.availableIcon.setImageResource(R.drawable.baseline_check_box_24)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -35,6 +41,7 @@ class MaterialAdapter : RecyclerView.Adapter<MaterialAdapter.MaterialViewHolder>
 
     class MaterialViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val materialName: TextView = itemView.findViewById(R.id.materialNameText)
+        val availableIcon: ImageButton = itemView.findViewById(R.id.availableIcon)
         // Définissez ici les autres vues de votre ViewHolder
     }
 }

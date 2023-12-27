@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,21 +50,63 @@ class MaterialFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val buttonHomeAvailable = view.findViewById<Button>(R.id.button_homeAvailable)
-        buttonHomeAvailable.setOnClickListener {
-            lifecycleScope.launch {
-                val materials = withContext(Dispatchers.IO) {
-                    materialDao.getMaterial()
-                }
-                withContext(Dispatchers.Main) {
-                    val materialNames = materials.joinToString("\n") { it.name }
-                    AlertDialog.Builder(requireContext())
-                        .setTitle("Material Names")
-                        .setMessage(materialNames)
-                        .setPositiveButton("OK") { dialog, _ ->
-                            dialog.dismiss()
+        val buttonHomeAvailable = view.findViewById<ToggleButton>(R.id.button_homeAvailable)
+        val buttonHomeNotAvailable = view.findViewById<ToggleButton>(R.id.button_homeNotAvailable)
+
+        buttonHomeAvailable.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // Si le bouton est coché, affichez les matériaux disponibles et décochez l'autre bouton
+                buttonHomeNotAvailable.isChecked = false
+                lifecycleScope.launch {
+                    val materials = withContext(Dispatchers.IO) {
+                        materialDao.getAvailableMaterial()
+                    }
+                    withContext(Dispatchers.Main) {
+                        recyclerView.adapter = MaterialAdapter().apply {
+                            setMaterials(materials)
                         }
-                        .show()
+                    }
+                }
+            } else {
+                // Si le bouton est décoché, affichez tous les matériaux
+                lifecycleScope.launch {
+                    val materials = withContext(Dispatchers.IO) {
+                        materialDao.getMaterial()
+                    }
+                    withContext(Dispatchers.Main) {
+                        recyclerView.adapter = MaterialAdapter().apply {
+                            setMaterials(materials)
+                        }
+                    }
+                }
+            }
+        }
+
+        buttonHomeNotAvailable.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // Si le bouton est coché, affichez les matériaux non disponibles et décochez l'autre bouton
+                buttonHomeAvailable.isChecked = false
+                lifecycleScope.launch {
+                    val materials = withContext(Dispatchers.IO) {
+                        materialDao.getUnavailableMaterial()
+                    }
+                    withContext(Dispatchers.Main) {
+                        recyclerView.adapter = MaterialAdapter().apply {
+                            setMaterials(materials)
+                        }
+                    }
+                }
+            } else {
+                // Si le bouton est décoché, affichez tous les matériaux
+                lifecycleScope.launch {
+                    val materials = withContext(Dispatchers.IO) {
+                        materialDao.getMaterial()
+                    }
+                    withContext(Dispatchers.Main) {
+                        recyclerView.adapter = MaterialAdapter().apply {
+                            setMaterials(materials)
+                        }
+                    }
                 }
             }
         }

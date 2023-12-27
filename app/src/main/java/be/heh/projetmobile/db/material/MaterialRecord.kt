@@ -10,5 +10,5 @@ data class MaterialRecord(
     @ColumnInfo(name="brand") var brand : String,
     @ColumnInfo(name="ref") var ref : Int,
     @ColumnInfo(name="maker") var maker : String,
-    @ColumnInfo(name="available") var available: Boolean
+    @ColumnInfo(name="available") var available: Int
 )

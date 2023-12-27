@@ -7,7 +7,7 @@ class Material(
     var brand: String,
     var ref: Int,
     var maker: String,
-    var available: Boolean
+    var available: Int
 ) {
     override fun toString(): String {
         val sb = StringBuilder()
@@ -18,7 +18,7 @@ class Material(
             "Brand : " + brand + "\n" +
             "Ref : " + ref + "\n" +
             "Maker : " + maker + "\n" +
-            if (available) {
+            if (available === 1) {
                 sb.append("\nStatus : Disponible")
             } else {
                 sb.append("\nStatus : Indisponible")
