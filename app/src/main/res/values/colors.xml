@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="availableGreen">#2EB66B</color>
     <color name="availableBlue">#03A9F4</color>
+    <color name="returnButton">#AC1616</color>
 </resources>

@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/materialItemLayout"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,11 +38,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginStart="80dp"
-                android:layout_marginEnd="165dp"
+                android:layout_marginEnd="185dp"
                 android:text="@string/material_item_name"
                 android:textAllCaps="true"
                 android:textColor="#000000"
-                android:textSize="15sp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/materialNbrText"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="210dp"
+                android:layout_marginEnd="165dp"
+                android:text="1"
+                android:textAllCaps="true"
+                android:textColor="#000000"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center_vertical" />
 
@@ -56,7 +70,7 @@
                 android:contentDescription="@string/material_available" />
 
             <ImageButton
-                android:id="@+id/editButton1"
+                android:id="@+id/editButton"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_alignParentEnd="true"
@@ -65,7 +79,7 @@
                 android:src="@drawable/ic_edit_black"
                 android:contentDescription="@string/material_edit_button" />
             <ImageButton
-                android:id="@+id/trashButton1"
+                android:id="@+id/trashButton"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginEnd="20dp"

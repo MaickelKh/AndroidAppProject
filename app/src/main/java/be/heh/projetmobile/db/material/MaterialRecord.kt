@@ -8,7 +8,7 @@ data class MaterialRecord(
     @ColumnInfo(name="name") var name : String,
     @ColumnInfo(name="type") var type : String,
     @ColumnInfo(name="brand") var brand : String,
-    @ColumnInfo(name="ref") var ref : Int,
+    @ColumnInfo(name="ref") var ref : String,
     @ColumnInfo(name="maker") var maker : String,
     @ColumnInfo(name="available") var available: Int
 )

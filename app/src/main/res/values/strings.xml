@@ -32,7 +32,7 @@
     <string name="home_give_back_button">Remise</string>
     <string name="home_add_button">Ajouter un article</string>
     <string name="home_stat">Statistiques</string>
-    <string name="home_loaned_items">Articles\n en prêt</string>
+    <string name="home_loaned_items">Article(s)\n en prêt</string>
     <string name="home_created_user">Utilisateur(s) enregistré(s)</string>
     <string name="home_logout_button">Déconnexion</string>
 

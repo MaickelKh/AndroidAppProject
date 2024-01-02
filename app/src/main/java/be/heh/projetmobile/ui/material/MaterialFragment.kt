@@ -17,6 +17,7 @@ import be.heh.projetmobile.adapter.MaterialAdapter
 import be.heh.projetmobile.adapter.UserAdapter
 import be.heh.projetmobile.databinding.FragmentMaterialBinding
 import be.heh.projetmobile.db.MyDB
+import be.heh.projetmobile.db.material.MaterialDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -53,32 +54,24 @@ class MaterialFragment : Fragment() {
         val buttonHomeAvailable = view.findViewById<ToggleButton>(R.id.button_homeAvailable)
         val buttonHomeNotAvailable = view.findViewById<ToggleButton>(R.id.button_homeNotAvailable)
 
+        getAllMaterial(materialDao, recyclerView)
+
         buttonHomeAvailable.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 // Si le bouton est coché, affichez les matériaux disponibles et décochez l'autre bouton
                 buttonHomeNotAvailable.isChecked = false
                 lifecycleScope.launch {
                     val materials = withContext(Dispatchers.IO) {
-                        materialDao.getAvailableMaterial()
+                        materialDao.getAvailableMaterial().toMutableList()
                     }
                     withContext(Dispatchers.Main) {
-                        recyclerView.adapter = MaterialAdapter().apply {
+                        recyclerView.adapter = MaterialAdapter(materials, requireContext(), materialDao).apply {
                             setMaterials(materials)
                         }
                     }
                 }
             } else {
-                // Si le bouton est décoché, affichez tous les matériaux
-                lifecycleScope.launch {
-                    val materials = withContext(Dispatchers.IO) {
-                        materialDao.getMaterial()
-                    }
-                    withContext(Dispatchers.Main) {
-                        recyclerView.adapter = MaterialAdapter().apply {
-                            setMaterials(materials)
-                        }
-                    }
-                }
+                getAllMaterial(materialDao, recyclerView)
             }
         }
 
@@ -88,35 +81,28 @@ class MaterialFragment : Fragment() {
                 buttonHomeAvailable.isChecked = false
                 lifecycleScope.launch {
                     val materials = withContext(Dispatchers.IO) {
-                        materialDao.getUnavailableMaterial()
+                        materialDao.getUnavailableMaterial().toMutableList()
                     }
                     withContext(Dispatchers.Main) {
-                        recyclerView.adapter = MaterialAdapter().apply {
+                        recyclerView.adapter = MaterialAdapter(materials, requireContext(), materialDao).apply {
                             setMaterials(materials)
                         }
                     }
                 }
             } else {
-                // Si le bouton est décoché, affichez tous les matériaux
-                lifecycleScope.launch {
-                    val materials = withContext(Dispatchers.IO) {
-                        materialDao.getMaterial()
-                    }
-                    withContext(Dispatchers.Main) {
-                        recyclerView.adapter = MaterialAdapter().apply {
-                            setMaterials(materials)
-                        }
-                    }
-                }
+                getAllMaterial(materialDao, recyclerView)
             }
         }
+    }
 
+    private fun getAllMaterial(materialDao : MaterialDao, recyclerView : RecyclerView) {
+        // Si le bouton est décoché, affichez tous les matériaux
         lifecycleScope.launch {
             val materials = withContext(Dispatchers.IO) {
-                materialDao.getMaterial()
+                materialDao.getMaterial().toMutableList()
             }
             withContext(Dispatchers.Main) {
-                recyclerView.adapter = MaterialAdapter().apply {
+                recyclerView.adapter = MaterialAdapter(materials, requireContext(), materialDao).apply {
                     setMaterials(materials)
                 }
             }

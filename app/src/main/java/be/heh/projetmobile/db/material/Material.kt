@@ -5,7 +5,7 @@ class Material(
     var name: String,
     var type: String,
     var brand: String,
-    var ref: Int,
+    var ref: String,
     var maker: String,
     var available: Int
 ) {

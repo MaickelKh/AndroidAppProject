@@ -84,10 +84,7 @@ class RegisterActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 return@launch
             }
 
-            // Check if there are any users in the database
             val anyUser = dao.getUsers()
-
-            // If there are no users in the database, the role is "Admin", otherwise it's "Basic"
             val role = if (anyUser.isEmpty()) "Admin" else "Basic"
 
             val u = UserRecord(0, firstName, lastName, role, password, email)

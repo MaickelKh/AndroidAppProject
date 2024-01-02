@@ -27,3 +27,15 @@ Nbre article loué : countLoaned
 /********** MATERIAL PAGE **********/
 Button dispo : button_homeAvailable
 Button non dispo : button_homeNotAvailable
+
+/********** ADD PAGE **********/
+Voici toutes les ID correspondantes dans votre fichier activity_manual_add.xml :
+@+id/title
+@+id/name
+@+id/type
+@+id/brand
+@+id/reference
+@+id/manufacturer_url
+@+id/button_layout
+@+id/add_button
+@+id/cancel_button

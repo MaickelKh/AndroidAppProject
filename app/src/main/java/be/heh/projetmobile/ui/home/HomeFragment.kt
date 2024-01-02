@@ -27,8 +27,10 @@ import be.heh.projetmobile.LoginActivity
 import be.heh.projetmobile.SessionManager
 import be.heh.projetmobile.db.user.UserDao
 import kotlinx.android.synthetic.main.fragment_home.HomeUserName
+import kotlinx.android.synthetic.main.fragment_home.countLoaned
 import kotlinx.android.synthetic.main.fragment_home.countUser
 import kotlinx.android.synthetic.main.fragment_home.textHelloName
+import kotlinx.android.synthetic.main.fragment_home.textUserFunction
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
@@ -62,12 +64,17 @@ class HomeFragment : Fragment() {
         userDao = db.userDao()
 
         HomeUserName.text = sessionManager.getUserName()
+        textUserFunction.text = sessionManager.getUserRole()
         textHelloName.text = "Bonjour " + sessionManager.getUserName() + " !"
 
         lifecycleScope.launch(Dispatchers.IO) {
             val usersCount = userDao.getUsers().size
             withContext(Dispatchers.Main) {
                 countUser.text = usersCount.toString()
+            }
+            val materialLoaned = materialDao.getUnavailableMaterial().size
+            withContext(Dispatchers.Main) {
+                countLoaned.text = materialLoaned.toString()
             }
         }
 
@@ -117,12 +124,12 @@ class HomeFragment : Fragment() {
                 val parts = result.contents.split(";").map { it.trim() }
                 val newArticle = MaterialRecord(
                     id = 0,
-                    name = parts[1],
-                    type = parts[2],
-                    brand = parts[3],
-                    ref = parts[4].toInt(),
-                    maker = parts[5],
-                    available = parts[6].toInt()
+                    name = parts[0],
+                    type = parts[1],
+                    brand = parts[2],
+                    ref = parts[3],
+                    maker = parts[4],
+                    available = parts[5].toInt()
                 )
                 // Add the new article to the database on a background thread
                 lifecycleScope.launch(Dispatchers.IO) {
