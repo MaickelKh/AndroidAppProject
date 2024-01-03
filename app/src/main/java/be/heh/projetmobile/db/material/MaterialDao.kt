@@ -7,6 +7,10 @@ import be.heh.projetmobile.db.user.UserRecord
 public interface MaterialDao {
     @Query("SELECT * FROM MaterialTable")
     fun getMaterial(): List<MaterialRecord>
+    @Query("SELECT * FROM MaterialTable WHERE ref = :ref")
+    fun getMaterialByRef(ref: String): MaterialRecord?
+    @Query("SELECT * FROM MaterialTable WHERE name = :name")
+    fun getMaterialByName(name: String): MaterialRecord?
     @Query("SELECT * FROM MaterialTable WHERE available = 1")
     fun getAvailableMaterial(): List<MaterialRecord>
     @Query("SELECT * FROM MaterialTable WHERE available = 0")

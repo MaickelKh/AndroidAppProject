@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.room.Room
+import at.favre.lib.crypto.bcrypt.BCrypt
 import be.heh.projetmobile.db.MyDB
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +21,8 @@ class LoginActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        supportActionBar?.hide() // Hide the action bar
+        supportActionBar?.hide()
 
-        // Initialize the SessionManager
         sessionManager = SessionManager(applicationContext)
 
         val registerButton = findViewById<Button>(R.id.button_registerNow)
@@ -30,7 +30,6 @@ class LoginActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
             startActivity(intent)
         }
-        // Initialize the database
         db = Room.databaseBuilder(
             applicationContext,
             MyDB::class.java, "MyDataBase"
@@ -44,25 +43,24 @@ class LoginActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
 
-            // Query the database for a user with the entered email and password
             launch(Dispatchers.IO) {
                 try {
                     val user = db.userDao().getUserByEmail(email)
                     withContext(Dispatchers.Main) {
-                        if (user != null && user.pwd == password) {
-                            // If a user is found and the password is correct, save the user id and role in the session
-                            sessionManager.userLogin(user.id.toString(), user.function, user.first_name)
+                        if (user != null) {
 
-                            // Navigate to the main activity
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            startActivity(intent)
+                            if (BCrypt.verifyer().verify(password.toCharArray(), user.pwd).verified) {
+                                sessionManager.userLogin(user.id.toString(), user.function, user.first_name)
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                startActivity(intent)
+                            } else {
+                                passwordInput.error = "Incorrect email or password"
+                            }
                         } else {
-                            // Show an error message if the email or password is incorrect
                             passwordInput.error = "Incorrect email or password"
                         }
                     }
                 } catch (e: Exception) {
-                    // Print the exception to the console
                     e.printStackTrace()
                 }
             }

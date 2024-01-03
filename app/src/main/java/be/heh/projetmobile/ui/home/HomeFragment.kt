@@ -21,14 +21,17 @@ import com.google.zxing.integration.android.IntentIntegrator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.content.DialogInterface
 import androidx.activity.OnBackPressedCallback
 import be.heh.projetmobile.LoginActivity
 import be.heh.projetmobile.SessionManager
 import be.heh.projetmobile.db.user.UserDao
 import kotlinx.android.synthetic.main.fragment_home.HomeUserName
+import kotlinx.android.synthetic.main.fragment_home.button_homeAdd
+import kotlinx.android.synthetic.main.fragment_home.button_homeGive
+import kotlinx.android.synthetic.main.fragment_home.button_homeGiveBack
 import kotlinx.android.synthetic.main.fragment_home.countLoaned
 import kotlinx.android.synthetic.main.fragment_home.countUser
+import kotlinx.android.synthetic.main.fragment_home.registerUser
 import kotlinx.android.synthetic.main.fragment_home.textHelloName
 import kotlinx.android.synthetic.main.fragment_home.textUserFunction
 
@@ -36,20 +39,20 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
     }
 }
-
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var sessionManager: SessionManager // Add this line
+    private lateinit var sessionManager: SessionManager
     private lateinit var materialDao: MaterialDao
     private lateinit var userDao: UserDao
+    private var currentAction: String? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        sessionManager = SessionManager(requireContext()) // Initialize the sessionManager
+        sessionManager = SessionManager(requireContext())
         return binding.root
     }
 
@@ -67,6 +70,14 @@ class HomeFragment : Fragment() {
         textUserFunction.text = sessionManager.getUserRole()
         textHelloName.text = "Bonjour " + sessionManager.getUserName() + " !"
 
+        val userProfile = sessionManager.getUserRole()
+        if (userProfile == "Basic") {
+            button_homeAdd.visibility = View.GONE
+            registerUser.visibility = View.GONE
+        } else if (userProfile == "RW") {
+            registerUser.visibility = View.GONE
+        }
+
         lifecycleScope.launch(Dispatchers.IO) {
             val usersCount = userDao.getUsers().size
             withContext(Dispatchers.Main) {
@@ -82,13 +93,40 @@ class HomeFragment : Fragment() {
             showLogoutConfirmationDialog()
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                showLogoutConfirmationDialog()
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    showLogoutConfirmationDialog()
+                }
+            })
+
+        button_homeGive.setOnClickListener {
+            currentAction = "give"
+            val integrator = IntentIntegrator.forSupportFragment(this)
+            integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+            integrator.setPrompt("Scanner le QR Code")
+            integrator.setOrientationLocked(false)
+            integrator.setCameraId(0)
+            integrator.setBeepEnabled(true)
+            integrator.setBarcodeImageEnabled(true)
+            integrator.initiateScan()
+        }
+
+        button_homeGiveBack.setOnClickListener {
+            currentAction = "giveBack"
+            val integrator = IntentIntegrator.forSupportFragment(this)
+            integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+            integrator.setPrompt("Scanner le QR Code")
+            integrator.setOrientationLocked(false)
+            integrator.setCameraId(0)
+            integrator.setBeepEnabled(true)
+            integrator.setBarcodeImageEnabled(true)
+            integrator.initiateScan()
+        }
 
         binding.buttonHomeAdd.setOnClickListener {
+            currentAction = "add"
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Ajouter un article")
             builder.setMessage("Souhaitez-vous ajouter un article manuellement ou par QR Code ?")
@@ -120,22 +158,87 @@ class HomeFragment : Fragment() {
             if (result.contents == null) {
                 Toast.makeText(context, "Scan annulé", Toast.LENGTH_LONG).show()
             } else {
-                // Parse the QR code content
-                val parts = result.contents.split(";").map { it.trim() }
-                val newArticle = MaterialRecord(
-                    id = 0,
-                    name = parts[0],
-                    type = parts[1],
-                    brand = parts[2],
-                    ref = parts[3],
-                    maker = parts[4],
-                    available = parts[5].toInt()
-                )
-                // Add the new article to the database on a background thread
-                lifecycleScope.launch(Dispatchers.IO) {
-                    materialDao.insertMaterial(newArticle)
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Article ajouté: " + result.contents, Toast.LENGTH_LONG).show()
+                if (currentAction == "add") {
+                    val parts = result.contents.split(";").map { it.trim() }
+                    val newArticle = MaterialRecord(
+                        id = 0,
+                        name = parts[0],
+                        type = parts[1],
+                        brand = parts[2],
+                        ref = parts[3],
+                        maker = parts[4],
+                        available = parts[5].toInt()
+
+                    )
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        materialDao.insertMaterial(newArticle)
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                "Article ajouté: " + result.contents,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                } else {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val parts = result.contents.split(";").map { it.trim() }
+                        val scannedRef = parts[3]
+                        val scannedName = parts[0]
+                        val material = materialDao.getMaterialByRef(scannedRef)
+                            ?: materialDao.getMaterialByName(scannedName)
+                        if (material != null) {
+                            if (currentAction == "give") {
+                                if (material.available == 0) {
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            "Erreur : l'article est déjà emprunté",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                } else {
+                                    material.available = 0
+                                    materialDao.updateMaterial(material)
+                                    val materialLoaned = materialDao.getUnavailableMaterial().size
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            "Mise à jour de l'article: " + material.name,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        countLoaned.text = materialLoaned.toString()
+                                    }
+                                }
+                            } else if (currentAction == "giveBack") {
+                                if (material.available == 1) {
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            "Erreur : l'article n'était pas emprunté",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                } else {
+                                    material.available = 1
+                                    materialDao.updateMaterial(material)
+                                    val materialLoaned = materialDao.getUnavailableMaterial().size
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(
+                                            context,
+                                            "Mise à jour de l'article: " + material.name,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                        countLoaned.text = materialLoaned.toString()
+                                    }
+                                }
+                            }
+                        } else {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(context, "Matériel inexistant", Toast.LENGTH_LONG)
+                                    .show()
+                            }
+                        }
                     }
                 }
             }

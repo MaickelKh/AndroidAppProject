@@ -34,9 +34,7 @@ class AccountFragment : Fragment() {
     ): View? {
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
-        sessionManager = SessionManager(requireContext()) // Initialize the sessionManage
-
+        sessionManager = SessionManager(requireContext())
         return root
     }
 
@@ -48,15 +46,11 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Get the user role from the session
         val userRole = sessionManager.getUserRole()
-
-        // If the user role is "Basic", show an error message and return
         if (userRole != "Admin") {
             textHelloName.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
             textHelloName.text = "Accès refusé. Vous n'avez pas les droits nécessaires pour accéder à cette page."
         } else {
-            // Obtenez une instance de UserDao
             val db = Room.databaseBuilder(
                 requireContext(),
                 MyDB::class.java, "MyDataBase"
@@ -66,12 +60,10 @@ class AccountFragment : Fragment() {
             val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
             recyclerView.layoutManager = LinearLayoutManager(context)
 
-            // Récupérez la liste des utilisateurs
             GlobalScope.launch {
                 val users = withContext(Dispatchers.IO) {
                     userDao.getUsers().toMutableList()
                 }
-
                 withContext(Dispatchers.Main) {
                     recyclerView.adapter = UserAdapter(users, requireContext(), userDao)
                 }

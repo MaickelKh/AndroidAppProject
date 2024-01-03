@@ -41,7 +41,6 @@ class MaterialFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Obtenez une instance de UserDao
         val db = Room.databaseBuilder(
             requireContext(),
             MyDB::class.java, "MyDataBase"
@@ -58,7 +57,6 @@ class MaterialFragment : Fragment() {
 
         buttonHomeAvailable.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                // Si le bouton est coché, affichez les matériaux disponibles et décochez l'autre bouton
                 buttonHomeNotAvailable.isChecked = false
                 lifecycleScope.launch {
                     val materials = withContext(Dispatchers.IO) {
@@ -77,7 +75,6 @@ class MaterialFragment : Fragment() {
 
         buttonHomeNotAvailable.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                // Si le bouton est coché, affichez les matériaux non disponibles et décochez l'autre bouton
                 buttonHomeAvailable.isChecked = false
                 lifecycleScope.launch {
                     val materials = withContext(Dispatchers.IO) {
@@ -96,7 +93,6 @@ class MaterialFragment : Fragment() {
     }
 
     private fun getAllMaterial(materialDao : MaterialDao, recyclerView : RecyclerView) {
-        // Si le bouton est décoché, affichez tous les matériaux
         lifecycleScope.launch {
             val materials = withContext(Dispatchers.IO) {
                 materialDao.getMaterial().toMutableList()

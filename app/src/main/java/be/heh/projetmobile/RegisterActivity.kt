@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.room.Room
+import at.favre.lib.crypto.bcrypt.BCrypt
 import be.heh.projetmobile.db.MyDB
 import be.heh.projetmobile.db.user.UserRecord
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,7 @@ class RegisterActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        supportActionBar?.hide() // Hide the action bar
+        supportActionBar?.hide()
 
         val registerButton = findViewById<Button>(R.id.register_button)
         registerButton.setOnClickListener {
@@ -40,33 +41,40 @@ class RegisterActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         val password = passwordInput.text.toString()
         val passwordConfirm = passwordConfirmInput.text.toString()
 
-        // Check if any of the input fields are empty
         if (firstName.isEmpty()) {
-            firstNameInput.error = "First name is required"
+            firstNameInput.error = "Le prénom est requis"
             return
         }
         if (lastName.isEmpty()) {
-            lastNameInput.error = "Last name is required"
+            lastNameInput.error = "Le nom est requis"
             return
         }
         if (email.isEmpty()) {
-            emailInput.error = "Email is required"
+            emailInput.error = "L'email est requis"
             return
         }
         if (password.isEmpty()) {
-            passwordInput.error = "Password is required"
+            passwordInput.error = "Le mot de passe est requis"
             return
         }
         if (passwordConfirm.isEmpty()) {
-            passwordConfirmInput.error = "Password confirmation is required"
+            passwordConfirmInput.error = "La confirmation du mot de passe est requise"
             return
         }
 
-        // Check if the passwords match
-        if (password != passwordConfirm) {
-            passwordConfirmInput.error = "Passwords do not match"
+        val passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=.*])(?=\\S+$).{8,}$"
+        val passwordMatcher = Regex(passwordPattern)
+        if (!passwordMatcher.matches(password)) {
+            passwordInput.error = "Le mot de passe doit contenir au moins 8 caractères, dont au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial"
             return
         }
+
+        if (password != passwordConfirm) {
+            passwordConfirmInput.error = "Les mots de passe ne correspondent pas"
+            return
+        }
+
+        val hashedPassword = BCrypt.withDefaults().hashToString(12, password.toCharArray())
 
         GlobalScope.launch(Dispatchers.IO) {
             val db = Room.databaseBuilder(
@@ -75,11 +83,10 @@ class RegisterActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             ).build()
             val dao = db.userDao()
 
-            // Check if a user with the entered email already exists
             val existingUser = dao.getUserByEmail(email)
             if (existingUser != null) {
                 withContext(Dispatchers.Main) {
-                    emailInput.error = "A user with this email already exists"
+                    emailInput.error = "Un utilisateur avec cet email existe déjà"
                 }
                 return@launch
             }
@@ -87,13 +94,12 @@ class RegisterActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             val anyUser = dao.getUsers()
             val role = if (anyUser.isEmpty()) "Admin" else "Basic"
 
-            val u = UserRecord(0, firstName, lastName, role, password, email)
+            val u = UserRecord(0, firstName, lastName, role, hashedPassword, email)
             dao.insertUser(u)
 
             withContext(Dispatchers.Main) {
                 Toast.makeText(this@RegisterActivity, "Inscription confirmée", Toast.LENGTH_LONG).show()
 
-                // Redirect to the login page
                 val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                 startActivity(intent)
             }

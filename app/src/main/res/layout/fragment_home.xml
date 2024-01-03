@@ -67,7 +67,7 @@
             />
 
         <Button
-            android:id="@+id/button_homeGiveBac"
+            android:id="@+id/button_homeGiveBack"
             android:backgroundTint="#03A9F4"
             android:drawableLeft="@drawable/ic_qr_code_scanner_24"
             android:text="@string/home_give_back_button"
@@ -106,6 +106,7 @@
         android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/linearStat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -153,6 +154,7 @@
 
         <!-- Deuxième paire d'image et de texte -->
         <RelativeLayout
+            android:id="@+id/registerUser"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2">

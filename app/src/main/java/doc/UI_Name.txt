@@ -17,7 +17,7 @@ Button s'inscrire : register_button
 
 /********** HOME PAGE **********/
 Button emprunt : button_homeGive
-Button remise : button_homeGiveBac
+Button remise : button_homeGiveBack
 Button ajouter : button_homeAdd
 Button déconnexion : button_homeLogout
 Prénom : HomeUserName

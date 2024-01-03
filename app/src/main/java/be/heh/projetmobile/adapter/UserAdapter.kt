@@ -38,9 +38,7 @@ class UserAdapter(private val users: MutableList<UserRecord>, private val contex
         holder.userName.text = user.first_name + " " + user.last_name
         holder.userFunction.text = user.function
 
-        // Ajoutez un OnClickListener sur userFunction
         holder.userItem.setOnClickListener {
-            // Créez un AlertDialog avec un Spinner
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Choisissez une nouvelle fonction")
 
@@ -52,14 +50,12 @@ class UserAdapter(private val users: MutableList<UserRecord>, private val contex
             builder.setPositiveButton("OK") { dialog, which ->
                 val newRole = spinner.selectedItem.toString()
 
-                // Mettez à jour la fonction de l'utilisateur dans la base de données
                 GlobalScope.launch {
                     withContext(Dispatchers.IO) {
                         userDao.updateUserFunction(user.email, newRole)
                     }
                 }
 
-                // Mettez à jour l'affichage
                 user.function = newRole
                 holder.userFunction.text = newRole
             }
@@ -70,19 +66,16 @@ class UserAdapter(private val users: MutableList<UserRecord>, private val contex
         }
 
         holder.cancelIcon.setOnClickListener {
-            // Créez un AlertDialog pour confirmer la suppression
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Confirmation")
             builder.setMessage("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")
 
             builder.setPositiveButton("Oui") { dialog, which ->
-                // Supprimez l'utilisateur de la base de données
                 GlobalScope.launch {
                     withContext(Dispatchers.IO) {
                         userDao.deleteUser(user)
                     }
 
-                    // Mettez à jour l'affichage
                     withContext(Dispatchers.Main) {
                         users.removeAt(position)
                         notifyItemRemoved(position)
@@ -91,7 +84,6 @@ class UserAdapter(private val users: MutableList<UserRecord>, private val contex
             }
 
             builder.setNegativeButton("Non", null)
-
             builder.show()
         }
     }

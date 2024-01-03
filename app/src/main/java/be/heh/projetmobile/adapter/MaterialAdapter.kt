@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import be.heh.projetmobile.R
+import be.heh.projetmobile.SessionManager
 import be.heh.projetmobile.db.material.MaterialDao
 import be.heh.projetmobile.db.material.MaterialRecord
 import kotlinx.coroutines.Dispatchers
@@ -29,14 +30,12 @@ class MaterialAdapter(private var materials: MutableList<MaterialRecord>, privat
         val materialName: TextView = itemView.findViewById(R.id.materialNameText)
         val availableIcon: ImageButton = itemView.findViewById(R.id.availableIcon)
         val trashButton: ImageButton = itemView.findViewById(R.id.trashButton)
-        val editButton: ImageButton = itemView.findViewById(R.id.editButton)
     }
-
+    private val sessionManager: SessionManager = SessionManager(context)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MaterialViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.material_item, parent, false)
         return MaterialViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: MaterialViewHolder, position: Int) {
         val material = materials[position]
         holder.materialName.text = material.brand + " " + material.name
@@ -44,6 +43,11 @@ class MaterialAdapter(private var materials: MutableList<MaterialRecord>, privat
             holder.availableIcon.setImageResource(R.drawable.baseline_cancel_24)
         } else if (material.available == 1) {
             holder.availableIcon.setImageResource(R.drawable.baseline_check_box_24)
+        }
+
+        val userProfile = sessionManager.getUserRole()
+        if (userProfile == "Basic") {
+            holder.trashButton.visibility = View.GONE
         }
 
         holder.itemView.setOnClickListener {
@@ -106,7 +110,6 @@ class MaterialAdapter(private var materials: MutableList<MaterialRecord>, privat
             builder.setMessage("Êtes-vous sûr de vouloir supprimer ce matériel ?")
 
             builder.setPositiveButton("Oui") { dialog, which ->
-                // Supprimez l'utilisateur de la base de données
                 GlobalScope.launch {
                     withContext(Dispatchers.IO) {
                         materialDao.deleteMaterial(material)
