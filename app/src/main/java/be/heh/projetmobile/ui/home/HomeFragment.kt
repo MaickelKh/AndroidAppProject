@@ -35,10 +35,6 @@ import kotlinx.android.synthetic.main.fragment_home.registerUser
 import kotlinx.android.synthetic.main.fragment_home.textHelloName
 import kotlinx.android.synthetic.main.fragment_home.textUserFunction
 
-val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-    }
-}
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -62,7 +58,7 @@ class HomeFragment : Fragment() {
         val db = Room.databaseBuilder(
             requireContext(),
             MyDB::class.java, "MyDataBase"
-        ).fallbackToDestructiveMigration().build()
+        ).build()
         materialDao = db.materialDao()
         userDao = db.userDao()
 
@@ -80,11 +76,9 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             val usersCount = userDao.getUsers().size
-            withContext(Dispatchers.Main) {
-                countUser.text = usersCount.toString()
-            }
             val materialLoaned = materialDao.getUnavailableMaterial().size
             withContext(Dispatchers.Main) {
+                countUser.text = usersCount.toString()
                 countLoaned.text = materialLoaned.toString()
             }
         }
@@ -160,25 +154,29 @@ class HomeFragment : Fragment() {
             } else {
                 if (currentAction == "add") {
                     val parts = result.contents.split(";").map { it.trim() }
-                    val newArticle = MaterialRecord(
-                        id = 0,
-                        name = parts[0],
-                        type = parts[1],
-                        brand = parts[2],
-                        ref = parts[3],
-                        maker = parts[4],
-                        available = parts[5].toInt()
-
-                    )
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        materialDao.insertMaterial(newArticle)
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                context,
-                                "Article ajouté: " + result.contents,
-                                Toast.LENGTH_LONG
-                            ).show()
+                    // if (parts.size == 5 && parts.all { it.isNotEmpty() }) {
+                    if (parts.size >= 5) {
+                        val newArticle = MaterialRecord(
+                            id = 0,
+                            name = parts[0],
+                            type = parts[1],
+                            brand = parts[2],
+                            ref = parts[3],
+                            maker = parts[4],
+                            available = 1
+                        )
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            materialDao.insertMaterial(newArticle)
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    "Article ajouté: " + result.contents,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
+                    } else {
+                        Toast.makeText(context, "QR Code invalide ou imcomplet", Toast.LENGTH_LONG).show()
                     }
                 } else {
                     lifecycleScope.launch(Dispatchers.IO) {

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import at.favre.lib.crypto.bcrypt.BCrypt
 import be.heh.projetmobile.db.MyDB
@@ -22,6 +23,12 @@ class RegisterActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
         supportActionBar?.hide()
+
+        val loginButton = findViewById<Button>(R.id.button_loginNow)
+        loginButton.setOnClickListener {
+            val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         val registerButton = findViewById<Button>(R.id.register_button)
         registerButton.setOnClickListener {
@@ -76,7 +83,7 @@ class RegisterActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
         val hashedPassword = BCrypt.withDefaults().hashToString(12, password.toCharArray())
 
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             val db = Room.databaseBuilder(
                 applicationContext,
                 MyDB::class.java, "MyDataBase"

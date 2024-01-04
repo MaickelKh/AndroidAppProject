@@ -1,5 +1,4 @@
 package be.heh.projetmobile.adapter;
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -10,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +30,7 @@ class MaterialAdapter(private var materials: MutableList<MaterialRecord>, privat
         val materialName: TextView = itemView.findViewById(R.id.materialNameText)
         val availableIcon: ImageButton = itemView.findViewById(R.id.availableIcon)
         val trashButton: ImageButton = itemView.findViewById(R.id.trashButton)
+        val materialIcon: ImageView = itemView.findViewById(R.id.materialIcon)
     }
     private val sessionManager: SessionManager = SessionManager(context)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MaterialViewHolder {
@@ -45,63 +46,71 @@ class MaterialAdapter(private var materials: MutableList<MaterialRecord>, privat
             holder.availableIcon.setImageResource(R.drawable.baseline_check_box_24)
         }
 
+        if (material.type == "laptop") {
+            holder.materialIcon.setImageResource(R.drawable.baseline_computer_24)
+        } else if (material.type == "tablet") {
+            holder.materialIcon.setImageResource(R.drawable.baseline_tablet_24)
+        } else if (material.type == "phone") {
+            holder.materialIcon.setImageResource(R.drawable.ic_smartphone_white)
+        }
+
         val userProfile = sessionManager.getUserRole()
         if (userProfile == "Basic") {
             holder.trashButton.visibility = View.GONE
-        }
+        } else {
+            holder.itemView.setOnClickListener {
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Modifier les informations sur le matériel")
 
-        holder.itemView.setOnClickListener {
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle("Modifier les informations sur le matériel")
+                val layout = LayoutInflater.from(context).inflate(R.layout.material_edit, null)
+                builder.setView(layout)
 
-            val layout = LayoutInflater.from(context).inflate(R.layout.material_edit, null)
-            builder.setView(layout)
+                val brandEditText = layout.findViewById<EditText>(R.id.brandEditText)
+                val nameEditText = layout.findViewById<EditText>(R.id.nameEditText)
+                val typeEditText = layout.findViewById<EditText>(R.id.typeEditText)
+                val refEditText = layout.findViewById<EditText>(R.id.refEditText)
+                val makerEditText = layout.findViewById<EditText>(R.id.makerEditText)
+                val availableCheckBox = layout.findViewById<CheckBox>(R.id.availableCheckBox)
 
-            val brandEditText = layout.findViewById<EditText>(R.id.brandEditText)
-            val nameEditText = layout.findViewById<EditText>(R.id.nameEditText)
-            val typeEditText = layout.findViewById<EditText>(R.id.typeEditText)
-            val refEditText = layout.findViewById<EditText>(R.id.refEditText)
-            val makerEditText = layout.findViewById<EditText>(R.id.makerEditText)
-            val availableCheckBox = layout.findViewById<CheckBox>(R.id.availableCheckBox)
+                brandEditText.setText(material.brand)
+                nameEditText.setText(material.name)
+                typeEditText.setText(material.type)
+                refEditText.setText(material.ref)
+                makerEditText.setText(material.maker)
+                availableCheckBox.isChecked = material.available == 1
 
-            brandEditText.setText(material.brand)
-            nameEditText.setText(material.name)
-            typeEditText.setText(material.type)
-            refEditText.setText(material.ref)
-            makerEditText.setText(material.maker)
-            availableCheckBox.isChecked = material.available == 1
-
-            val makerLink = layout.findViewById<TextView>(R.id.makerLink)
-            makerLink.text = "Cliquez ici pour visitez la page du constructeur"
-            makerLink.setOnClickListener {
-                try {
-                    val url = URL(makerEditText.text.toString())
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()))
-                    context.startActivity(intent)
-                } catch (e: MalformedURLException) {
-                    Toast.makeText(context, "URL non valide", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            builder.setPositiveButton("Enregistrer") { dialog, which ->
-                material.brand = brandEditText.text.toString()
-                material.name = nameEditText.text.toString()
-                material.type = typeEditText.text.toString()
-                material.ref = refEditText.text.toString()
-                material.maker = makerEditText.text.toString()
-                material.available = if (availableCheckBox.isChecked) 1 else 0
-
-                GlobalScope.launch {
-                    withContext(Dispatchers.IO) {
-                        materialDao.updateMaterial(material)
-                    }
-                    withContext(Dispatchers.Main) {
-                        notifyItemChanged(position)
+                val makerLink = layout.findViewById<TextView>(R.id.makerLink)
+                makerLink.text = "Cliquez ici pour visitez la page du constructeur"
+                makerLink.setOnClickListener {
+                    try {
+                        val url = URL(makerEditText.text.toString())
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()))
+                        context.startActivity(intent)
+                    } catch (e: MalformedURLException) {
+                        Toast.makeText(context, "URL non valide", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                builder.setPositiveButton("Enregistrer") { dialog, which ->
+                    material.brand = brandEditText.text.toString()
+                    material.name = nameEditText.text.toString()
+                    material.type = typeEditText.text.toString()
+                    material.ref = refEditText.text.toString()
+                    material.maker = makerEditText.text.toString()
+                    material.available = if (availableCheckBox.isChecked) 1 else 0
+
+                    GlobalScope.launch {
+                        withContext(Dispatchers.IO) {
+                            materialDao.updateMaterial(material)
+                        }
+                        withContext(Dispatchers.Main) {
+                            notifyItemChanged(position)
+                        }
+                    }
+                }
+                builder.setNegativeButton("Annuler", null)
+                builder.show()
             }
-            builder.setNegativeButton("Annuler", null)
-            builder.show()
         }
 
         holder.trashButton.setOnClickListener {
@@ -116,7 +125,7 @@ class MaterialAdapter(private var materials: MutableList<MaterialRecord>, privat
                     }
                     withContext(Dispatchers.Main) {
                         materials.removeAt(position)
-                        notifyItemRemoved(position)
+                        notifyDataSetChanged()
                     }
                 }
             }

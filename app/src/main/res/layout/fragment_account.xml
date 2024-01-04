@@ -12,7 +12,7 @@
         android:layout_height="150dp"
         android:layout_marginLeft="25dp"
         android:layout_marginTop="30dp"
-        android:text="@string/material_title"
+        android:text="@string/account_title"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

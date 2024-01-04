@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
 import at.favre.lib.crypto.bcrypt.BCrypt
 import be.heh.projetmobile.db.MyDB
@@ -43,21 +44,22 @@ class LoginActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
 
-            launch(Dispatchers.IO) {
+            lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     val user = db.userDao().getUserByEmail(email)
                     withContext(Dispatchers.Main) {
                         if (user != null) {
-
-                            if (BCrypt.verifyer().verify(password.toCharArray(), user.pwd).verified) {
+                            if (user.function.equals("Désactivé")) {
+                                passwordInput.error = "Ce compte est désactivé"
+                            } else if (BCrypt.verifyer().verify(password.toCharArray(), user.pwd).verified) {
                                 sessionManager.userLogin(user.id.toString(), user.function, user.first_name)
                                 val intent = Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(intent)
                             } else {
-                                passwordInput.error = "Incorrect email or password"
+                                passwordInput.error = "Email ou mot de passe incorrect"
                             }
                         } else {
-                            passwordInput.error = "Incorrect email or password"
+                            passwordInput.error = "Email ou mot de passe incorrect"
                         }
                     }
                 } catch (e: Exception) {
